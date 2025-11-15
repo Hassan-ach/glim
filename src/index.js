@@ -1,88 +1,43 @@
-#!/usr/bin/node
 /**
  * Glim: YouTube Video Summarizer
  *
  * Main entry point for the Glim application.
- * Handles command-line arguments and orchestrates the summarization process.
+ * Handles processing YouTube videos in browser extension context.
  *
  * @author Bagi
  * @version 1.0.0
  */
 
-import { program } from "commander";
-import readline from "readline";
 import { createYouTubeProcessorFlow } from "./flow.js";
-import { config, createDefaultConfig } from "./config.js";
+import { loadConfig } from "./config.js";
 import logger from "./utils/logger.js";
 import { verifyProviderRequirements } from "./utils/callLLM.js";
-import { createPDFfile } from "./utils/pdfConvertor.js";
 
 /**
- * Get user input from the console
- * @param {string} question - Question to display to the user
- * @returns {Promise<string>} User's answer
+ * Process a YouTube video
+ * @param {string} url - YouTube video URL
+ * @param {object} options - Processing options
+ * @returns {Promise<object>} Processing result
  */
-function getUserInput(question) {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
-
-    return new Promise((resolve) => {
-        rl.question(question, (answer) => {
-            rl.close();
-            resolve(answer);
-        });
-    });
-}
-
-async function main() {
+async function processVideo(url, options = {}) {
     try {
-        // Set up command line arguments
-        program
-            .description(
-                "Process a YouTube video to extract topics, questions, and generate ELI5 answers.",
-            )
-            .option("--url <url>", "YouTube video URL to process")
-            .option("--config", "Create default config file")
-            .option("--pdf", "Create pdf format from the html")
-            .option("--theme <theme>, Output Theme")
-            .option("--lang <lang>, Output language")
-            .option(
-                "--provider <name>",
-                "Specify AI provider (google, openai, anthropic, localai)",
-            )
-            .option(
-                "--api-key <key>",
-                "Specify API key for the chosen provider",
-            )
-            .parse();
+        logger.info(`Starting YouTube content processor for URL: ${url}`);
 
-        const options = program.opts();
+        // Load config from storage
+        const config = await loadConfig();
 
-        if (options.pdf && !options.url) {
-            await createPDFfile();
-            process.exit(0);
-        }
-
-        // Handle --config option
-        if (options.config) {
-            logger.info("Creating default configuration file");
-            await createDefaultConfig();
-            logger.info("Configuration file created successfully");
-            process.exit(0);
-        }
-
-        // Handle provider selection from command line
+        // Override config with options if provided
         if (options.provider) {
-            // Override provider in config
             config.api.provider = options.provider;
         }
-
-        // Handle API key from command line
         if (options.apiKey) {
-            // Override API key in config
             config.api.key = options.apiKey;
+        }
+        if (options.theme) {
+            config.content.theme = options.theme;
+        }
+        if (options.lang) {
+            config.content.codeLang = options.lang;
         }
 
         // Validate provider requirements
@@ -91,16 +46,8 @@ async function main() {
             logger.warn(
                 `Issues detected with provider '${provider}'. The application may not function correctly.`,
             );
-            // We continue anyway, but with a warning
         }
 
-        // Get YouTube URL from arguments or prompt user
-        let inputURL = options.url;
-        if (!inputURL) {
-            url = await getUserInput("Enter YouTube URL to process: ");
-        }
-
-        logger.info(`Starting YouTube content processor for URL: ${inputURL}`);
         logger.info(`Using AI provider: ${provider}`);
 
         // Create flow
@@ -108,41 +55,26 @@ async function main() {
 
         // Initialize shared memory
         const shared = {
-            url: inputURL,
-            theme: options.theme || "default",
-            lang: options.lang || "",
+            url: url,
+            theme: options.theme || config.content.theme || "default",
+            lang: options.lang || config.content.codeLang || "en",
         };
 
         // Run the flow
         await flow.run(shared);
 
-        // Report success and output file location
-        const pdf = options.pdf;
-        if (pdf) {
-            await createPDFfile(shared.video_info?.title);
-        }
-        console.log("\n" + "=".repeat(50));
-        logger.log("Processing completed successfully!");
-        console.log("=".repeat(50) + "\n");
+        logger.info("Processing completed successfully!");
 
-        return 0;
+        return {
+            success: true,
+            data: shared,
+        };
     } catch (error) {
-        logger.error(`Error in main function: ${error.message}`);
-        logger.error("An error occurred:", error.message);
-        return 1;
+        logger.error(`Error processing video: ${error.message}`);
+        return {
+            success: false,
+            error: error.message,
+        };
     }
 }
-
-// Run the main function if this file is executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-    main()
-        .then((exitCode) => {
-            process.exit(exitCode);
-        })
-        .catch((error) => {
-            logger.error(`Unhandled error: ${error.message}`);
-            process.exit(1);
-        });
-}
-
-export { main };
+export { processVideo };

@@ -9,14 +9,12 @@
  */
 
 import yaml from "js-yaml";
-import fs from "fs";
 import { Node, BatchNode } from "./pocketflow.js";
 import { callLLM } from "./utils/callLLM.js";
 import { getVideoInfo } from "./utils/youtubeProcessor.js";
 import { _generateHtmlForTheme } from "./utils/htmlGenerator.js";
-import { config } from "./config.js";
+import { loadConfig } from "./config.js";
 import logger from "./utils/logger.js";
-import path from "path";
 
 // Define the specific nodes for the Glim YouTube Content Processor
 
@@ -43,6 +41,7 @@ class ProcessYouTubeURL extends Node {
      */
     async prep(shared) {
         logger.debug("Preparing to process YouTube URL");
+        const config = await loadConfig();
         const url = shared.url || "";
         const lang = shared.lang || config.content?.codeLang || "";
         return { url, lang };
@@ -137,6 +136,7 @@ class ExtractTopicsAndQuestions extends Node {
         /**
          * Get transcript and title from video_info
          */
+        const config = await loadConfig();
         const videoInfo = shared.video_info || {};
         const transcript = videoInfo.transcript || "";
         const title = videoInfo.title || "";
@@ -152,6 +152,7 @@ class ExtractTopicsAndQuestions extends Node {
             data;
 
         // Single prompt to extract topics and questions together
+        const config = await loadConfig();
         const prompt = `You are an expert content analyzer. Given a YouTube video transcript, identify at most ${config.content?.maxTopics || 5} most interesting topics discussed and generate at most ${config.content?.maxQuestionsPerTopic || 3} most thought-provoking questions for each topic.
 These questions don't need to be directly asked in the video. It's good to have clarification questions.
 
@@ -195,6 +196,7 @@ topics:
         let rawTopics = parsed.topics || [];
 
         // Ensure we have at most 5 or maxTopics from config topics
+        // config is already loaded above in this function
         rawTopics = rawTopics.slice(0, config.content?.maxTopics || 5);
 
         // Format the topics and questions for our data structure
@@ -247,6 +249,7 @@ class ProcessContent extends BatchNode {
         /**
          * Return list of topics for batch processing
          */
+        const config = await loadConfig();
         const lang = shared.lang || config.content?.codeLang || "en";
         const topics = shared.topics || [];
         const videoInfo = shared.video_info || {};
@@ -602,6 +605,7 @@ class GenerateHTML extends Node {
         /**
          * Get video info and topics from shared
          */
+        const config = await loadConfig();
         const videoInfo = shared.video_info || {};
         const topics = shared.topics || [];
         const theme = shared.theme || config.content?.theme || "default";
@@ -650,6 +654,7 @@ class GenerateHTML extends Node {
         }
 
         // Generate HTML
+        const config = await loadConfig();
         const htmlContent = _generateHtmlForTheme(
             theme,
             title,
@@ -669,10 +674,10 @@ class GenerateHTML extends Node {
         // Write HTML to file
         try {
             // Ensure output directory exists
-            const dir = path.resolve(config.output?.dirname || ".");
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir, { recursive: true });
-            }
+            // const dir = path.resolve(config.output?.dirname || ".");
+            // if (!fs.existsSync(dir)) {
+            //     fs.mkdirSync(dir, { recursive: true });
+            // }
 
             // Prepare safe filename
             const rawTitle =
@@ -680,10 +685,11 @@ class GenerateHTML extends Node {
             const safeTitle = rawTitle
                 .replace(/[<>:"/\\|?*\x00-\x1F]/g, "")
                 .trim(); // sanitize filename
-            const filename = path.join(dir, `${safeTitle}.html`);
+            // const filename = path.join(dir, `${safeTitle}.html`);
 
             // Write HTML output to file
-            fs.writeFileSync(filename, execRes);
+            // fs.writeFileSync(filename, execRes);
+            shared.html = execRes;
             logger.info(`Generated HTML output and saved to ${filename}`);
         } catch (err) {
             console.error(`Could not create output directory: ${err.message}`);

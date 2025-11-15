@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { config } from "../config.js";
+import { loadConfig } from "../config.js";
 import logger from "./logger.js";
 
 /**
@@ -12,7 +12,7 @@ import logger from "./logger.js";
  * - Anthropic Claude
  * - Local LLMs (via API endpoint)
  *
- * The provider can be configured in the config.yml file.
+ * The provider can be configured in the extension options page.
  *
  * @module callLLM
  * @author Bagi
@@ -24,17 +24,19 @@ import logger from "./logger.js";
  * @returns {Promise<string>} - The text response from the LLM
  */
 export async function callLLM(prompt) {
+    const config = await loadConfig();
     const provider = config.api?.provider?.toLowerCase() || "google";
 
     switch (provider) {
         case "google":
             return await callGemini(prompt);
-        case "openai":
-            return await callOpenAI(prompt);
-        case "anthropic":
-            return await callAnthropic(prompt);
-        case "localai":
-            return await callLocalAI(prompt);
+        // I'm not sure about these providers are working, so commenting them out for now
+        // case "openai":
+        //     return await callOpenAI(prompt);
+        // case "anthropic":
+        //     return await callAnthropic(prompt);
+        // case "localai":
+        //     return await callLocalAI(prompt);
         default:
             console.warn(
                 `Unknown provider '${provider}', falling back to Google Gemini`,
@@ -49,10 +51,11 @@ export async function callLLM(prompt) {
  */
 export async function callGemini(prompt) {
     try {
-        const apiKey = config.api?.key || process.env.GOOGLE_API_KEY;
+        const config = await loadConfig();
+        const apiKey = config.api?.key;
         if (!apiKey) {
             throw new Error(
-                "Google API key not found. Set it in config.yml or GOOGLE_API_KEY environment variable.",
+                "Google API key not found. Please configure it in the extension options.",
             );
         }
 
@@ -76,6 +79,7 @@ export async function callGemini(prompt) {
  */
 export async function callOpenAI(prompt) {
     try {
+        const config = await loadConfig();
         // Check if OpenAI package is installed
         let OpenAI;
         try {
@@ -86,10 +90,10 @@ export async function callOpenAI(prompt) {
             );
         }
 
-        const apiKey = config.api?.key || process.env.OPENAI_API_KEY;
+        const apiKey = config.api?.key;
         if (!apiKey) {
             throw new Error(
-                "OpenAI API key not found. Set it in config.yml or OPENAI_API_KEY environment variable.",
+                "OpenAI API key not found. Please configure it in the extension options.",
             );
         }
 
@@ -115,6 +119,7 @@ export async function callOpenAI(prompt) {
  */
 export async function callAnthropic(prompt) {
     try {
+        const config = await loadConfig();
         // Check if Anthropic package is installed
         let Anthropic;
         try {
@@ -125,10 +130,10 @@ export async function callAnthropic(prompt) {
             );
         }
 
-        const apiKey = config.api?.key || process.env.ANTHROPIC_API_KEY;
+        const apiKey = config.api?.key;
         if (!apiKey) {
             throw new Error(
-                "Anthropic API key not found. Set it in config.yml or ANTHROPIC_API_KEY environment variable.",
+                "Anthropic API key not found. Please configure it in the extension options.",
             );
         }
 
@@ -154,6 +159,7 @@ export async function callAnthropic(prompt) {
  */
 export async function callLocalAI(prompt) {
     try {
+        const config = await loadConfig();
         const endpoint =
             config.api?.endpoint || "http://localhost:11434/api/generate";
         const model = config.api?.model || "llama3";
@@ -194,21 +200,13 @@ export async function callLocalAI(prompt) {
 export async function verifyProviderRequirements(provider) {
     if (!provider) return true; // Using default provider
 
+    const config = await loadConfig();
     const lowerProvider = provider.toLowerCase();
 
     // Check for API key
-    const envVarName =
-        lowerProvider === "google"
-            ? "GOOGLE_API_KEY"
-            : lowerProvider === "openai"
-              ? "OPENAI_API_KEY"
-              : lowerProvider === "anthropic"
-                ? "ANTHROPIC_API_KEY"
-                : null;
-
-    if (envVarName && !process.env[envVarName] && !config.api?.key) {
+    if (!config.api?.key) {
         logger.warn(
-            `No API key found for provider '${lowerProvider}'. Set it in config.yml or ${envVarName} environment variable.`,
+            `No API key found for provider '${lowerProvider}'. Please configure it in the extension options.`,
         );
         return false;
     }

@@ -1,0 +1,12 @@
+{
+    "manifest_version": 3,
+    "name": "YT-Summarize Extension",
+    "description": "Extension that take YouTube video and return page html that summarize it.",
+    "version": "1.0",
+    "action": {
+        "default_popup": "popup/index.html"
+    },
+    "options_page": "./options/options.html",
+    "permissions": ["scripting", "activeTab", "storage", "tabs"],
+    "host_permissions": ["*://*/*"]
+}

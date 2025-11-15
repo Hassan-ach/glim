@@ -7,20 +7,16 @@
     "license": "MIT",
     "dependencies": {
         "@google/generative-ai": "^0.24.1",
-        "commander": "^14.0.0",
-        "js-yaml": "^4.1.0",
-        "jsdom": "^26.1.0",
-        "puppeteer": "^24.10.0",
-        "youtube-transcript": "^1.2.1",
-        "youtube-transcript-api": "^2.0.4"
+        "js-yaml": "^4.1.0"
     },
     "optionalDependencies": {
-        "openai": "^4.32.0",
-        "@anthropic-ai/sdk": "^0.19.0"
+        "@anthropic-ai/sdk": "^0.19.0",
+        "openai": "^4.32.0"
     },
     "scripts": {
-        "start": "node index.js",
-        "config": "node index.js --config",
-        "debug": "DEBUG=true node index.js"
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "vite": "^7.2.2"
     }
 }

@@ -678,9 +678,11 @@ const THEMES = {
                 background-color: #ffffff; 
                 color: #000000;
                 position: relative;
-                ${isRTL ? 
-                    "right: -15px; padding-right: 25px;" : 
-                    "left: -15px; padding-left: 25px;"}
+                ${
+                    isRTL
+                        ? "right: -15px; padding-right: 25px;"
+                        : "left: -15px; padding-left: 25px;"
+                }
                 width: calc(100% + 30px);
             }
             h2::before {

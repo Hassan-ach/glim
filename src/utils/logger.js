@@ -1,15 +1,12 @@
 /**
  * Logger utility for Glim
  *
- * Provides unified logging capabilities with both console
- * and file output for better debugging and traceability.
+ * Provides unified logging capabilities with console output
+ * for better debugging and traceability.
  *
  * @module logger
  * @author Bagi
  */
-import fs from "fs";
-import path from "path";
-import util from "util";
 
 /**
  * ANSI escape color codes for terminal output
@@ -30,21 +27,9 @@ class Logger {
     /**
      * Create a new logger instance
      * @param {string} name - Logger name/component identifier
-     * @param {string} logFile - Log file path (default: "glim.log")
      */
-    constructor(name, logFile = "glim.log") {
+    constructor(name) {
         this.name = name;
-        this.logFile = logFile;
-
-        // Ensure log directory exists
-        try {
-            const dir = path.dirname(this.logFile);
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir, { recursive: true });
-            }
-        } catch (err) {
-            console.error(`Could not create log directory: ${err.message}`);
-        }
     }
 
     /**
@@ -73,18 +58,7 @@ class Logger {
                 break;
         }
 
-        // Log to console (with colored level)
         consoleLog(logMessage);
-
-        // Log to file (strip ANSI codes from entire message)
-        const plainLogMessage = `${timestamp} - ${this.name} - ${rawLevel} - ${message}`;
-        try {
-            fs.appendFileSync(this.logFile, plainLogMessage + "\n");
-        } catch (err) {
-            console.error(
-                `${COLORS.ERROR}Failed to write to log file: ${err.message}${COLORS.RESET}`,
-            );
-        }
     }
 
     /**
@@ -116,23 +90,14 @@ class Logger {
      * @param {string} message - Debug message to log
      */
     debug(message) {
-        if (!process.env.DEBUG) {
-            return;
-        }
         this.log(`${COLORS.DEBUG}DEBUG${COLORS.RESET}`, message);
     }
+
     inspect(obj) {
-        console.log(util.inspect(obj, { depth: null }));
+        console.log(JSON.stringify(obj, null, 2));
     }
 }
 
 // Create and export default logger instances
 const glimLogger = new Logger("glim");
 export default glimLogger;
-
-// Create specific loggers for different components
-export const youtubeLogger = new Logger(
-    "youtube_processor",
-    "youtube_processor.log",
-);
-export const llmLogger = new Logger("llm", "llm_processor.log");

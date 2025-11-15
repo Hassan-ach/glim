@@ -7,10 +7,37 @@
  * @module youtubeProcessor
  * @author Bagi
  */
-import { JSDOM } from "jsdom";
-import TranscriptAPI from "youtube-transcript-api";
-import { config } from "../config.js";
+// Browser-compatible HTML parsing
+// Use DOMParser in browser, JSDOM in Node.js (loaded dynamically)
+import TranscriptAPI from "./yt-transcript-apt.js";
+import { loadConfig } from "../config.js";
 import logger from "./logger.js";
+
+/**
+ * Parse HTML and extract title - browser compatible
+ */
+async function parseHTMLTitle(html) {
+    // Browser environment - use DOMParser
+    if (typeof DOMParser !== 'undefined') {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const title = doc.querySelector("title")?.textContent.replace(" - YouTube", "") || null;
+        return title;
+    }
+    
+    // Node.js environment - use JSDOM dynamically
+    try {
+        const { JSDOM } = await import("jsdom");
+        const dom = new JSDOM(html);
+        const title = dom.window.document
+            .querySelector("title")
+            ?.textContent.replace(" - YouTube", "") || null;
+        return title;
+    } catch (e) {
+        logger.warn("Could not parse HTML title - JSDOM not available");
+        return null;
+    }
+}
 
 /**
  * Extract YouTube video ID from URL
@@ -67,17 +94,14 @@ export async function getVideoInfo(url, _lang) {
         }
 
         const html = await res.text();
-        const dom = new JSDOM(html);
-        const title =
-            dom.window.document
-                .querySelector("title")
-                ?.textContent.replace(" - YouTube", "") ||
-            `YouTube Video (${videoId})`;
+        const parsedTitle = await parseHTMLTitle(html);
+        const title = parsedTitle || `YouTube Video (${videoId})`;
 
         // Get high-resolution thumbnail
         const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
         // Extract transcript using specified language
+        const config = await loadConfig();
         const lang = _lang || config.content?.codeLang || "en";
         logger.info(`Fetching transcript in language: ${lang}`);
 
@@ -118,25 +142,3 @@ export async function getVideoInfo(url, _lang) {
     }
 }
 
-/**
- * Direct module execution for testing
- */
-if (import.meta.url === `file://${process.argv[1]}`) {
-    const testUrl = "https://www.youtube.com/watch?v=_1f-o0nqpEI";
-    logger.info(`Testing with URL: ${testUrl}`);
-
-    try {
-        const result = await getVideoInfo(testUrl);
-        console.log(JSON.stringify(result, null, 2));
-
-        if (result.error) {
-            console.error(`Test failed: ${result.error}`);
-            process.exit(1);
-        } else {
-            console.log("Test successful!");
-        }
-    } catch (err) {
-        console.error(`Uncaught error during test: ${err.message}`);
-        process.exit(1);
-    }
-}
