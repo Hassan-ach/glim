@@ -69,13 +69,15 @@ async function loadConfiguration() {
  */
 async function saveConfiguration(event) {
     event.preventDefault();
+    const api_key = document.getElementById("apiKey").value;
+    const key = api_key == "" ? config.api.key : api_key;
 
     try {
         // Build config object from form data
         const config = {
             api: {
                 // provider: document.getElementById("apiProvider").value,
-                // key: document.getElementById("apiKey").value,
+                key: key,
                 // model: document.getElementById("apiModel").value,
                 // temperature: parseFloat(
                 //     document.getElementById("temperature").value,

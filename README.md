@@ -112,6 +112,7 @@ Selectable via Options page.
 
 ```
 npm install
+export VITE_API_KEY="your gemini-api-key"
 npm run build
 ```
 
