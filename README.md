@@ -117,6 +117,22 @@ npm run build
 
 Load the `dist/` folder as an unpacked Chrome extension after building.
 
+Here’s a concise “Releases” section you can add to your README for a Chrome extension:
+
+______________________________________________________________________
+
+## Releases
+
+Pre-built versions of Glim are available as Chrome extension `.tar.gz` packages.
+
+### Installing a Release
+
+1. Download the latest release from the [Releases page](https://github.com/Hassan-ach/glim/releases).
+1. Extract the `.tar.gz` file.
+1. Open Chrome → `chrome://extensions/`
+1. Enable **Developer mode**
+1. Click **Load unpacked** and select the extracted folder
+
 ## License
 
 [MIT](./LICENSE)
