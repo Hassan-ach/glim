@@ -9,6 +9,7 @@
 - Use the `--pdf` flag to also generate a PDF version
 - Use the `--theme <theme>` flag to select an output theme (default: 'default')
 - Use the `--lang <lang>` flag to specify the output language (default: 'en')"800"/>
+
 </div>
 
 ![Glim](https://img.shields.io/badge/Glim-YouTube_Summarizer-red)
@@ -35,7 +36,7 @@ A powerful Node.js application that transforms YouTube videos into well-organize
 ## Installation
 
 1. Clone the repository
-2. Install dependencies:
+1. Install dependencies:
 
 ```bash
 npm install
@@ -94,10 +95,10 @@ node src/index.js --url "https://www.youtube.com/watch?v=VIDEO_ID" --provider op
 When you run Glim, it will:
 
 1. Extract the video transcript
-2. Identify the main topics
-3. Generate questions for each topic
-4. Create simple ELI5 answers
-5. Generate an HTML output file (and optionally PDF)
+1. Identify the main topics
+1. Generate questions for each topic
+1. Create simple ELI5 answers
+1. Generate an HTML output file (and optionally PDF)
 
 ## Configuration
 
@@ -168,8 +169,8 @@ api:
 ```
 
 1. Obtain a Google API key from [Google AI Studio](https://makersuite.google.com/)
-2. Set it in your environment variables: `export GOOGLE_API_KEY="your-api-key"`
-3. Or update the `key` field in your `config.yml` file
+1. Set it in your environment variables: `export GOOGLE_API_KEY="your-api-key"`
+1. Or update the `key` field in your `config.yml` file
 
 #### OpenAI
 
@@ -182,9 +183,9 @@ api:
 ```
 
 1. Install the OpenAI package: `npm install openai`
-2. Obtain an API key from [OpenAI Platform](https://platform.openai.com/)
-3. Set it in your environment variables: `export OPENAI_API_KEY="your-api-key"`
-4. Or update the `key` field in your `config.yml` file
+1. Obtain an API key from [OpenAI Platform](https://platform.openai.com/)
+1. Set it in your environment variables: `export OPENAI_API_KEY="your-api-key"`
+1. Or update the `key` field in your `config.yml` file
 
 #### Anthropic Claude
 
@@ -197,9 +198,9 @@ api:
 ```
 
 1. Install the Anthropic package: `npm install @anthropic-ai/sdk`
-2. Obtain an API key from [Anthropic Console](https://console.anthropic.com/)
-3. Set it in your environment variables: `export ANTHROPIC_API_KEY="your-api-key"`
-4. Or update the `key` field in your `config.yml` file
+1. Obtain an API key from [Anthropic Console](https://console.anthropic.com/)
+1. Set it in your environment variables: `export ANTHROPIC_API_KEY="your-api-key"`
+1. Or update the `key` field in your `config.yml` file
 
 #### Local LLM (Ollama, LocalAI, etc.)
 
@@ -213,7 +214,7 @@ api:
 ```
 
 1. Set up and run a local LLM server like [Ollama](https://ollama.ai/) or [LocalAI](https://github.com/go-skynet/LocalAI)
-2. Configure the endpoint URL in your `config.yml` file
+1. Configure the endpoint URL in your `config.yml` file
 
 You can easily extend Glim with additional AI providers by modifying the `callLLM.js` file.
 
@@ -237,16 +238,16 @@ You can adjust the following parameters in your `config.yml`:
 Glim offers several beautifully crafted themes for your video summaries:
 
 1. **Default** - Clean, minimalist design with soft shadows and modern typography
-2. **Neomorphism** - Soft UI design with subtle shadows and clean interfaces
-3. **Glassmorphism** - Modern glass-like transparent UI elements
-4. **RetroY2K** - Nostalgic design inspired by early 2000s web aesthetics
-5. **Hacker** - Terminal-style dark theme with monospace fonts
-6. **Typography** - Focus on beautiful typography with perfect readability
-7. **Maximalist** - Bold, vibrant design with decorative elements
-8. **Brutalist** - Raw, bold design with high contrast and visible construction
-9. **Flat** - Clean, minimalist design without shadows or depth
-10. **Minimalist** - Ultra-simple design focused on content
-11. **Material** - Following Material Design principles with cards, elevation and color system
+1. **Neomorphism** - Soft UI design with subtle shadows and clean interfaces
+1. **Glassmorphism** - Modern glass-like transparent UI elements
+1. **RetroY2K** - Nostalgic design inspired by early 2000s web aesthetics
+1. **Hacker** - Terminal-style dark theme with monospace fonts
+1. **Typography** - Focus on beautiful typography with perfect readability
+1. **Maximalist** - Bold, vibrant design with decorative elements
+1. **Brutalist** - Raw, bold design with high contrast and visible construction
+1. **Flat** - Clean, minimalist design without shadows or depth
+1. **Minimalist** - Ultra-simple design focused on content
+1. **Material** - Following Material Design principles with cards, elevation and color system
 
 Select a theme using the `--theme` flag:
 
@@ -263,11 +264,11 @@ Example outputs of different themes can be found in the `output` directory.
 - `src/pocketflow.js` - PocketFlow framework integration
 - `src/nodes.js` - Processing nodes for the video summarization pipeline
 - `src/utils/` - Utility functions:
-    - `callLLM.js` - Multi-provider LLM API interaction
-    - `youtubeProcessor.js` - YouTube video processing
-    - `htmlGenerator.js` - HTML output generation
-    - `logger.js` - Enhanced logging functionality
-    - `pdfConvertor.js` - PDF conversion utilities
+  - `callLLM.js` - Multi-provider LLM API interaction
+  - `youtubeProcessor.js` - YouTube video processing
+  - `htmlGenerator.js` - HTML output generation
+  - `logger.js` - Enhanced logging functionality
+  - `pdfConvertor.js` - PDF conversion utilities
 
 ### Component Architecture
 
@@ -379,11 +380,11 @@ flowchart TD
 #### Processing Nodes
 
 1. **Input Node**: Handles YouTube URL validation and processing
-2. **Extraction Node**: Extracts video transcript using YouTube API
-3. **Analysis Node**: Sends content to the selected LLM provider for topic extraction
-4. **Question Generation Node**: Creates questions for each identified topic
-5. **Answer Generation Node**: Produces ELI5 answers for each question
-6. **Output Node**: Formats results into HTML/PDF using templates
+1. **Extraction Node**: Extracts video transcript using YouTube API
+1. **Analysis Node**: Sends content to the selected LLM provider for topic extraction
+1. **Question Generation Node**: Creates questions for each identified topic
+1. **Answer Generation Node**: Produces ELI5 answers for each question
+1. **Output Node**: Formats results into HTML/PDF using templates
 
 This modular approach makes it easy to:
 
@@ -461,69 +462,69 @@ Want to modify or extend Glim? Here's how to set up your development environment
 
 1. Clone the repository:
 
-    ```bash
-    git clone https://github.com/yourusername/glim.git
-    cd glim
-    ```
+   ```bash
+   git clone https://github.com/Hassan-ach/glim.git
+   cd glim
+   ```
 
-2. Install dependencies:
+1. Install dependencies:
 
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 
-3. Create a config file with your API key:
+1. Create a config file with your API key:
 
-    ```bash
-    node src/index.js --config
-    ```
+   ```bash
+   node src/index.js --config
+   ```
 
-    Then edit the `config.yml` file to add your API key.
+   Then edit the `config.yml` file to add your API key.
 
-4. Make your changes to the codebase.
+1. Make your changes to the codebase.
 
-5. Test your changes:
+1. Test your changes:
 
-    ```bash
-    GOOGLE_API_KEY="your-api-key" node src/index.js --url "https://www.youtube.com/watch?v=VIDEO_ID"
-    ```
+   ```bash
+   GOOGLE_API_KEY="your-api-key" node src/index.js --url "https://www.youtube.com/watch?v=VIDEO_ID"
+   ```
 
 ### Adding a New AI Provider
 
 To add support for a different AI model or provider:
 
 1. Create a new file in `src/utils/` for your provider, for example `openAIProvider.js`.
-2. Implement the API call function similar to the existing `callLLM.js`.
-3. Update the `config.js` file to include your new provider in the options.
-4. Modify the code in the nodes that call the LLM to use your new provider when selected.
+1. Implement the API call function similar to the existing `callLLM.js`.
+1. Update the `config.js` file to include your new provider in the options.
+1. Modify the code in the nodes that call the LLM to use your new provider when selected.
 
 ## Troubleshooting
 
 ### API Key Issues
 
 - **Error**: "API key not found"
-    - **Solution**: Make sure your API key is set in the environment variable or in the config.yml file.
+  - **Solution**: Make sure your API key is set in the environment variable or in the config.yml file.
 
 ### YouTube Video Access
 
 - **Error**: "Could not extract video transcript"
-    - **Solution**: Make sure the video is public and has captions/subtitles available.
+  - **Solution**: Make sure the video is public and has captions/subtitles available.
 
 ### PDF Generation
 
 - **Error**: "Failed to write output file as pdf"
-    - **Solution**: Ensure you have Puppeteer installed correctly and enough system resources.
+  - **Solution**: Ensure you have Puppeteer installed correctly and enough system resources.
 
 ### Theme Issues
 
 - **Error**: "Theme not found" or "Rendering error"
-    - **Solution**: Verify the theme name is correct and matches one of the available options.
+  - **Solution**: Verify the theme name is correct and matches one of the available options.
 
 ## License
 
 [MIT](./LICENSE)
 
----
+______________________________________________________________________
 
 <div align="center">
   <p>Made with ❤️ by Bagi</p>
