@@ -463,7 +463,7 @@ Want to modify or extend Glim? Here's how to set up your development environment
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/Hassan-ach/glim.git
+   git clone -b cli --single-branch https://github.com/Hassan-ach/glim.git
    cd glim
    ```
 
