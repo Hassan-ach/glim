@@ -41,18 +41,11 @@ async function loadConfiguration() {
         const config = await loadConfig();
 
         // Populate API settings
-        document.getElementById("apiProvider").value =
-            config.api.provider || "google";
-        document.getElementById("apiKey").value = config.api.key || "";
-        document.getElementById("apiModel").value =
-            config.api.model || "gemini-2.0-flash";
-        // document.getElementById("temperature").value =
-        //     config.api.temperature || 0.7;
-        // temperatureValue.textContent = config.api.temperature || 0.7;
-        // document.getElementById("maxTokens").value =
-        //     config.api.max_tokens || 4000;
-        // document.getElementById("apiEndpoint").value =
-        //     config.api.endpoint || "http://localhost:11434/api/generate";
+        // document.getElementById("apiProvider").value =
+        //     config.api.provider || "google";
+        // document.getElementById("apiKey").value = config.api.key || "";
+        // document.getElementById("apiModel").value =
+        //   config.api.model || "gemini-2.0-flash";
 
         // Populate content settings
         document.getElementById("maxTopics").value =
@@ -81,9 +74,9 @@ async function saveConfiguration(event) {
         // Build config object from form data
         const config = {
             api: {
-                provider: document.getElementById("apiProvider").value,
-                key: document.getElementById("apiKey").value,
-                model: document.getElementById("apiModel").value,
+                // provider: document.getElementById("apiProvider").value,
+                // key: document.getElementById("apiKey").value,
+                // model: document.getElementById("apiModel").value,
                 // temperature: parseFloat(
                 //     document.getElementById("temperature").value,
                 // ),
@@ -103,15 +96,15 @@ async function saveConfiguration(event) {
         };
 
         // Validate required fields
-        if (!config.api.provider) {
-            showStatus("Please select an API provider", "error");
-            return;
-        }
+        // if (!config.api.provider) {
+        //     showStatus("Please select an API provider", "error");
+        //     return;
+        // }
 
-        if (config.api.provider !== "localai" && !config.api.key) {
-            showStatus("API key is required for non-local providers", "error");
-            return;
-        }
+        // if (config.api.provider !== "localai" && !config.api.key) {
+        //     showStatus("API key is required for non-local providers", "error");
+        //     return;
+        // }
 
         // Save configuration
         await saveConfig(config);
@@ -140,9 +133,9 @@ async function resetToDefaults() {
         // Populate form with default values
         const config = defaultConfiguration;
 
-        document.getElementById("apiProvider").value = config.api.provider;
-        document.getElementById("apiKey").value = config.api.key;
-        document.getElementById("apiModel").value = config.api.model;
+        // document.getElementById("apiProvider").value = config.api.provider;
+        // document.getElementById("apiKey").value = config.api.key;
+        // document.getElementById("apiModel").value = config.api.model;
         // document.getElementById("temperature").value = config.api.temperature;
         // temperatureValue.textContent = config.api.temperature;
         // document.getElementById("maxTokens").value = config.api.max_tokens;

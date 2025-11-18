@@ -670,31 +670,6 @@ class GenerateHTML extends Node {
          * Store HTML output in shared
          */
         shared.html_output = execRes;
-
-        // Write HTML to file
-        try {
-            // Ensure output directory exists
-            // const dir = path.resolve(config.output?.dirname || ".");
-            // if (!fs.existsSync(dir)) {
-            //     fs.mkdirSync(dir, { recursive: true });
-            // }
-
-            // Prepare safe filename
-            const rawTitle =
-                shared.video_info?.title || "YouTube Video Summary";
-            const safeTitle = rawTitle
-                .replace(/[<>:"/\\|?*\x00-\x1F]/g, "")
-                .trim(); // sanitize filename
-            // const filename = path.join(dir, `${safeTitle}.html`);
-
-            // Write HTML output to file
-            // fs.writeFileSync(filename, execRes);
-            shared.html = execRes;
-            logger.info(`Generated HTML output and saved to ${filename}`);
-        } catch (err) {
-            console.error(`Could not create output directory: ${err.message}`);
-        }
-
         return "default";
     }
 }

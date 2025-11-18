@@ -52,7 +52,7 @@ export async function callLLM(prompt) {
 export async function callGemini(prompt) {
     try {
         const config = await loadConfig();
-        const apiKey = config.api?.key;
+        const apiKey = config.api?.key ;
         if (!apiKey) {
             throw new Error(
                 "Google API key not found. Please configure it in the extension options.",

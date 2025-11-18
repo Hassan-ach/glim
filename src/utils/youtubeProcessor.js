@@ -18,23 +18,27 @@ import logger from "./logger.js";
  */
 async function parseHTMLTitle(html) {
     // Browser environment - use DOMParser
-    if (typeof DOMParser !== 'undefined') {
+    if (typeof DOMParser !== "undefined") {
         const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const title = doc.querySelector("title")?.textContent.replace(" - YouTube", "") || null;
+        const doc = parser.parseFromString(html, "text/html");
+        const title =
+            doc.querySelector("title")?.textContent.replace(" - YouTube", "") ||
+            null;
         return title;
     }
-    
-    // Node.js environment - use JSDOM dynamically
+
     try {
-        const { JSDOM } = await import("jsdom");
-        const dom = new JSDOM(html);
-        const title = dom.window.document
-            .querySelector("title")
-            ?.textContent.replace(" - YouTube", "") || null;
+        // Browser environment - parse HTML using DOMParser
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        const title =
+            doc.querySelector("title")?.textContent.replace(" - YouTube", "") ||
+            null;
+
         return title;
     } catch (e) {
-        logger.warn("Could not parse HTML title - JSDOM not available");
+        logger.warn("Could not parse HTML title in browser");
         return null;
     }
 }
@@ -141,4 +145,3 @@ export async function getVideoInfo(url, _lang) {
         return { error: err.message };
     }
 }
-

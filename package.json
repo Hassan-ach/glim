@@ -14,7 +14,7 @@
         "openai": "^4.32.0"
     },
     "scripts": {
-        "build": "vite build"
+        "build": "vite build && cp manifest.json dist/ && cp -r images dist/"
     },
     "devDependencies": {
         "vite": "^7.2.2"

@@ -65,31 +65,71 @@ export function _generateHtmlForTheme(
     if (!theme) {
         throw new Error(`Theme "${themeName}" not found.`);
     }
-
     const isRTL = _isRTL(lang);
     const generatedByText = _getGeneratedByText(lang);
 
-    // 1. Build the HTML for the summary sections by iterating through the data
+    // 1. Build the HTML for the summary sections
     let sectionsHtml = sections
         .map((section) => {
             const bulletsHtml = section.bullets
                 .map(([bold, text]) => theme.templates.bulletItem(bold, text))
                 .join("\n");
-
             const bulletListHtml = theme.templates.bulletList(bulletsHtml);
             const sectionTitleHtml = theme.templates.sectionTitle(
                 section.title,
             );
-
             return theme.templates.sectionContainer(
                 sectionTitleHtml,
                 bulletListHtml,
             );
         })
         .join("\n");
+    // 2. Download button HTML with inline script (not working for now)
+    const downloadButtonHtml = `
+<div style="position: fixed; top: 20px; ${isRTL ? "left" : "right"}: 20px; z-index: 1000;">
+  <button 
+    id="downloadHtmlButton"
+    style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+    📥 Download HTML
+  </button>
+</div>
+<script>
+(function() {
+  const title = "${title}";
+  
+  function downloadHTML() {
+    const storedHtml = localStorage.getItem(title);
+    
+    if (!storedHtml) {
+      alert('No HTML found in localStorage for: ' + title);
+      return;
+    }
+    
+    const blob = new Blob([storedHtml], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+  
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('downloadHtmlButton').addEventListener('click', downloadHTML);
+    });
+  } else {
+    document.getElementById('downloadHtmlButton').addEventListener('click', downloadHTML);
+  }
+})();
+</script>`;
 
-    // 2. Assemble the full content for the <body> tag
+    // 3. Assemble the full content for the <body> tag
     const bodyInnerHtml = [
+        // downloadButtonHtml,
         theme.templates.header(generatedByText, isRTL),
         theme.templates.title(title),
         theme.templates.image(imageUrl),
@@ -98,13 +138,13 @@ export function _generateHtmlForTheme(
         theme.templates.footer(),
     ].join("\n");
 
-    // 3. Construct the full <body> tag with its specific wrapper/container
+    // 4. Construct the full <body> tag
     const bodyHtml = `
 <body class="${theme.bodyClass}">
   ${theme.templates.bodyWrapper(bodyInnerHtml)}
 </body>`;
 
-    // 4. Construct the <head> tag
+    // 5. Construct the <head> tag
     const headHtml = `
 <head>
   <meta charset="UTF-8" />
@@ -118,7 +158,7 @@ export function _generateHtmlForTheme(
   </style>
 </head>`;
 
-    // 5. Assemble the final HTML document
+    // 6. Assemble the final HTML document
     return `<!DOCTYPE html>
 <html lang="${lang}" dir="${isRTL ? "rtl" : "ltr"}">
 ${headHtml}

@@ -13,7 +13,7 @@ const defaultConfig = {
     // API settings
     api: {
         provider: "google", // Options: google, openai, anthropic, localai
-        key: "",
+        key: import.meta.env.VITE_API_KEY,
         model: "gemini-2.0-flash",
         // Additional model settings
         temperature: 0.7, // Controls randomness (0.0-1.0)
