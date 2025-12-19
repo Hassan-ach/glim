@@ -59,7 +59,7 @@ vite.config.js
 ```
 
 - **popup/**: user interface for triggering summaries
-- **options/**: settings (API keys, provider, theme, language)
+- **options/**: settings (API keys, theme, language)
 - **src/**: core logic, identical to CLI but adapted for extension
 - **utils/**: transcript extraction, LLM calls, HTML generation, logging
 
